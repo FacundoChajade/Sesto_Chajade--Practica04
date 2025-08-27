@@ -88,13 +88,12 @@ while True:
                 print(f"{cantidad}-{sat}\n")
             while True:
                 try:
-                    satelite_elegido = int(input("Seleccione el satelite que quiera asignar: "))
-                    if satelite_elegido > (len(lista_satelites)+1):
+                    satelite = int(input("Seleccione el satelite que quiera asignar: "))
+                    if satelite > (len(lista_satelites)+1):
                         raise ValueError("Ingrese un valor valido")
                     break
                 except Exception as e:
                     print("Error: ",e)
-            satelite = lista_satelites[satelite_elegido-1]
             objetivo = str(input("Ingrese el objetivo de la mision: "))
             zona = str(input("Ingrese la zona de observacion: "))
             while True:
@@ -140,7 +139,10 @@ while True:
         elif opcion == 7:
             pass
         elif opcion == 8:
-            servidor.sendall("salir".encode())
+            mensaje = {
+                "accion":"salir"
+            }
+            servidor.sendall(json.dumps(mensaje).encode())
             break
         
     except Exception as e:

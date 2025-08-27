@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS satelites_db;
 CREATE DATABASE satelites_db;
 USE satelites_db;
 
-CREATE TABLE Satelites (
+CREATE TABLE Satelite (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     tipo VARCHAR(50),
@@ -11,7 +11,7 @@ CREATE TABLE Satelites (
     estado VARCHAR(50)
 );
 
-CREATE TABLE Sensores (
+CREATE TABLE Sensor (
     id INT AUTO_INCREMENT PRIMARY KEY,
     satelite_id INT,
     nombre VARCHAR(100),
@@ -19,7 +19,7 @@ CREATE TABLE Sensores (
     FOREIGN KEY (satelite_id) REFERENCES Satelites(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Misiones (
+CREATE TABLE Mision (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     satelite_id INT,

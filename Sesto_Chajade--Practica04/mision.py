@@ -14,7 +14,7 @@ class Mision:
         return {
             "accion":accion,
             "nombre":self.nombre,
-            "satelite":self.satelite.devolver_json(),
+            "satelite":self.satelite,
             "objetivo":self.objetivo,
             "zona":self.zona,
             "duracion":self.duracion,
