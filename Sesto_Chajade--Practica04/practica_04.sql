@@ -33,8 +33,8 @@ CREATE TABLE Mision (
 CREATE TABLE datos_mision (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_mision INT NOT NULL,
-    id_sensor INT NOT NULL,
-    valor INT NOT NULL,
-    FOREIGN KEY (id_mision) REFERENCES Mision(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_sensor) REFERENCES Sensor(id) ON DELETE CASCADE
+    tipo VARCHAR(100) NOT NULL,
+    valor INT,
+    descripcion VARCHAR(255),
+    FOREIGN KEY (id_mision) REFERENCES Mision(id) ON DELETE CASCADE
 );

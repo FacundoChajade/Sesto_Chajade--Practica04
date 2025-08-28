@@ -130,6 +130,10 @@ while True:
             mision = Mision(nombre, satelite, objetivo, zona, duracion, estado)
             enviar = mision.devolver_json("registrar_mision")
             servidor.sendall(json.dumps(enviar).encode())
+            respuesta = servidor.recv(3000).decode()
+            respuesta = json.loads(respuesta)
+            print(respuesta["respuesta"])
+        
         
         elif opcion == 3:
             lista_misiones = recibir_datos("recibir_misiones")
@@ -286,7 +290,89 @@ while True:
                 for sat in satelites_filtrados:
                     print(sat)
         elif opcion == 6:
-            pass
+            lista_misiones = recibir_datos("recibir_misiones")
+            cantidad = 0
+            for mis in lista_misiones:
+                cantidad +=1
+                print(f"{cantidad}-{mis}\n")
+            if len(lista_misiones) != 0:
+                while True:
+                    try:
+                        mision_elegida = int(input("Elija la mision en la que quiera registrar un dato: "))
+                        if mision_elegida > len(lista_misiones) or mision_elegida <1:
+                            raise ValueError("Ingrese un valor valido")
+                        break
+                    except Exception as e:
+                        print("Error: ",e)
+                while True:
+                    try:        
+                        accion = int(input("¿Que dato se recolectará? 1-Imagen 2-Sensor 3-Medicion Científica"))
+                        break
+                    except Exception as e:
+                        print("Error: ",e)
+                if accion == 1:
+                    descripcion = str(input("Describa el resultado de la medición científica "))
+                    enviar = {
+                        "accion": "registrar_datos",
+                        "id_mision": mision_elegida,
+                        "tipo": "imagen",
+                        "valor": None,
+                        "descripcion": descripcion
+                    }
+            
+                elif accion == 2:
+                    lista_satelites = recibir_datos("recibir_satelites")
+                    satelite_mision = None
+
+                    for satelite in lista_satelites:
+                        if satelite[0] == lista_misiones[mision_elegida-1][2]:
+                            satelite_mision = satelite
+                    sensores = satelite[6]
+                    cantidad = 0
+                    for sensor in sensores:
+                        cantidad +=1
+                        print(f"{cantidad}-{sensor}\n")
+                    while True:
+                        try:
+                            sensor_elegido = int(input("Seleccione el sensor que registrá un dato: "))
+                            if sensor_elegido > len(sensores) or sensor_elegido <1:
+                                raise ValueError("Ingrese un valor valido")
+                            break
+                        except Exception as e:
+                            print("Error: ",e)
+                    sensor_registrar = sensores[sensor_elegido-1]
+                    while True:
+                        try:
+                            valor = int(input("Ingrese el valor a registrar: "))
+                            break
+                        except Exception as e:
+                            print("Error: ",e)
+                    enviar = {
+                        "accion": "registrar_datos",
+                        "id_mision": mision_elegida,
+                        "tipo": sensor_registrar["nombre"],
+                        "valor": valor,
+                        "descripcion": f"El tipo de unidad medida es: {sensor_registrar["tipo_unidad"]}"
+                    }
+                    
+                           
+                elif accion == 3:
+                    descripcion = str(input("Describa el resultado de la medición científica "))
+                    enviar = {
+                        "accion": "registrar_datos",
+                        "id_mision": mision_elegida,
+                        "tipo": "imagen",
+                        "valor": None,
+                        "descripcion": descripcion
+                    }
+                print(enviar)
+                servidor.sendall(json.dumps(enviar).encode())
+                respuesta = servidor.recv(3000).decode()
+                respuesta = json.loads(respuesta)
+                print(respuesta["respuesta"])
+            else:
+                print("No hay misiones para registrar datos")
+            
         elif opcion == 7:
             lista_datos = recibir_datos("recibir_datos")
             cantidad = 0

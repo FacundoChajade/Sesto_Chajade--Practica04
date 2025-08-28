@@ -76,6 +76,14 @@ try:
                     datos.append(fila)
                 conexion.desconectar()
                 conn.sendall(json.dumps(datos).encode())
+            elif data["accion"] == "registrar_datos":
+                conexion.conectar()
+                cursor = conexion.conn.cursor()
+                
+                cursor.execute("INSERT INTO datos_mision(id_mision, tipo, valor, descripcion) VALUES(%s,%s,%s,%s)",(data["id_mision"],data["tipo"],data["valor"],data["descripcion"]))
+                conexion.conn.commit()
+                conexion.desconectar()
+                conn.sendall(json.dumps({"respuesta":"Se registraron los datos correctamente."}).encode())
 except Exception as e:
     print("Error: ",e)
 os.system("pause")
