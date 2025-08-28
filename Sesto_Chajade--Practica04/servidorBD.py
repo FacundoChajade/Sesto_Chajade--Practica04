@@ -19,6 +19,12 @@ try:
                 conexion.conectar()
                 cursor = conexion.conn.cursor()
                 cursor.execute("INSERT INTO Satelite(nombre, tipo, fecha_lanzamiento, orbita, estado) VALUES(%s,%s,%s,%s,%s)",(data["nombre"],data["tipo"],datetime.strptime(data["fecha_lanzamiento"], "%d-%m-%y"),data["orbita"],data["estado"]))
+                
+                conexion.conn.commit()
+                nuevo_id = cursor.lastrowid
+                cursor2 = conexion.conn.cursor()
+                for i in data["sensores"]:
+                    cursor2.execute("INSERT INTO Sensor(nombre,tipo_unidad, satelite_id) VALUES (%s,%s,%s)",(i["nombre"],i["tipo_unidad"],nuevo_id))
                 conexion.conn.commit()
                 conexion.desconectar()
                 conn.sendall(json.dumps({"respuesta":"Se registró correctamente el satélite"}).encode())
@@ -36,7 +42,11 @@ try:
                 filas = cursor.fetchall()
                 satelites=[]
                 for fila in filas:
-                    satelites.append((fila[0], fila[1],fila[2],str(fila[3]),fila[4],fila[5]))
+                    cursor2 = conexion.conn.cursor()
+                    cursor2.execute("SELECT nombre FROM Sensor WHERE satelite_id = %s",(fila[0],))
+                    fila_sensores = cursor2.fetchall()
+                    sensores = [s[0] for s in fila_sensores]
+                    satelites.append((fila[0], fila[1],fila[2],str(fila[3]),fila[4],fila[5],sensores))
                 conexion.desconectar()
                 conn.sendall(json.dumps(satelites).encode())
             elif data["accion"] == "recibir_misiones":
