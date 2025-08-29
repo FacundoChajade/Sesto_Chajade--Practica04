@@ -43,27 +43,13 @@ while True:
             elif tipo_opcion == 3:
                 tipo = "Nanosatelital"
             
-            while True:
-                fecha_lanzamiento = input("Ingrese la fecha de lanzazmiento (DD-MM-YY): ")
-                try:
-                    fecha_obj = datetime.strptime(fecha_lanzamiento, "%d-%m-%y")
-                    fecha = fecha_obj.strftime("%d-%m-%y")
-                    break
-                except Exception as e:
-                    print("Error: ",e)
+            fecha_lanzamiento = input("Ingrese la fecha de lanzazmiento (DD-MM-YY): ")
 
-            while True:
-                try:
-                    orbita = int(input("Ingrese la altura a la que orbita (KM): "))
-                    if orbita < 160:
-                        raise ValueError("Ingrese un valor válido")
-                    break
-                except ValueError as ve:
-                    print("Error: ",ve)
+            orbita = input("Ingrese la altura a la que orbita (KM): ")
             while True:
                 try:
                     estado_opcion = int(input("Ingrese el estado de la mision: 1-Activo 2-Inactivo 3-En mantenimiento"))
-                    if estado_opcion < 1 or estado_opcion >3:
+                    if estado_opcion < 1 or estado_opcion > 3:
                         raise ValueError("Ingrese un valor válido")
                     break
                 except ValueError as ve:
@@ -78,15 +64,36 @@ while True:
             satelite = Satelite(nombre,tipo,fecha_lanzamiento, orbita,estado)
             cantidad = 0
             
-            sensor_radiacion = int(input("Desea agregar un piranometro? 1-Si 2-No "))
+            while True:
+                try:
+                    sensor_radiacion = int(input("Desea agregar un piranometro? 1-Si 2-No "))
+                    if sensor_radiacion < 1 or sensor_radiacion > 2:
+                        raise ValueError("Ingrese un valor válido")
+                    break
+                except ValueError as ve:
+                    print("Error: ",ve)
             if sensor_radiacion == 1:
                 satelite.agregar_sensor(Sensor("Piranometro", "W/m²"))
 
-            sensor_temperatura = int(input("Desea agregar un termometro? 1-Si 2-No "))
+            while True:
+                try:
+                    sensor_temperatura = int(input("Desea agregar un termometro? 1-Si 2-No "))
+                    if sensor_temperatura < 1 or sensor_temperatura > 2:
+                        raise ValueError("Ingrese un valor válido")
+                    break
+                except ValueError as ve:
+                    print("Error: ",ve)
             if sensor_temperatura == 1:
                 satelite.agregar_sensor(Sensor("Termometro", "°C"))
 
-            sensor_presion = int(input("Desea agregar un barometro? 1-Si 2-No "))
+            while True:
+                try:
+                    sensor_presion = int(input("Desea agregar un barometro? 1-Si 2-No "))
+                    if sensor_presion < 1 or sensor_presion > 2:
+                        raise ValueError("Ingrese un valor válido")
+                    break
+                except ValueError as ve:
+                    print("Error: ",ve)
             if sensor_presion == 1:
                 satelite.agregar_sensor(Sensor("Barometro", "hPa"))
 
@@ -100,6 +107,9 @@ while True:
         elif opcion == 2:
             nombre = str(input("Ingrese el nombre de la mision: "))
             lista_satelites = recibir_datos("recibir_satelites")
+            if isinstance(lista_satelites, dict) and "respuesta" in lista_satelites:
+                print(lista_satelites["respuesta"])
+                continue
             cantidad = 0
             for sat in lista_satelites:
                 cantidad +=1
@@ -110,22 +120,14 @@ while True:
             while True:
                 try:
                     satelite = int(input("Seleccione el satelite que quiera asignar: "))
-                    if satelite > len(lista_satelites):
-                        raise ValueError("Ingrese un valor valido")
+                    if satelite < 1 or satelite > len(lista_satelites):
+                        raise ValueError("Ingrese un valor válido")
                     break
-                except Exception as e:
-                    print("Error: ",e)
+                except ValueError as ve:
+                    print("Error: ",ve)
             objetivo = str(input("Ingrese el objetivo de la mision: "))
             zona = str(input("Ingrese la zona de observacion: "))
-            while True:
-                duracion = input("Ingrese la duración de la mision (dias)")
-                try:
-                    duracion = int(duracion)
-                except Exception as e:
-                    print("Error: ",e)
-                if not isinstance(duracion, int):
-                    raise ValueError("Ingrese un valor válido")
-                break
+            duracion = input("Ingrese la duración de la mision (dias)")
             estado = str(input("En qué estado se encuentra: "))
             mision = Mision(nombre, satelite, objetivo, zona, duracion, estado)
             enviar = mision.devolver_json("registrar_mision")
@@ -137,6 +139,9 @@ while True:
         
         elif opcion == 3:
             lista_misiones = recibir_datos("recibir_misiones")
+            if isinstance(lista_misiones, dict) and "respuesta" in lista_misiones:
+                print(lista_misiones["respuesta"])
+                continue
             cantidad = 0
             for mis in lista_misiones:
                 cantidad +=1
@@ -144,11 +149,11 @@ while True:
             while True:
                 try:
                     mision_elegida = int(input("Seleccione el satelite que quiera asignar: "))
-                    if mision_elegida > len(lista_misiones):
-                        raise ValueError("Ingrese un valor valido")
+                    if mision_elegida < 1 or mision_elegida > len(lista_misiones):
+                        raise ValueError("Ingrese un valor válido")
                     break
-                except Exception as e:
-                    print("Error: ",e)
+                except ValueError as ve:
+                    print("Error: ",ve)
     
             estado_nuevo = str(input("Ingrese el nuevo estado de la mision: "))
             enviar = {
@@ -162,25 +167,26 @@ while True:
             print(respuesta["respuesta"])
         
         elif opcion == 4:
-            #filtrar por nombre de satelite, por nombre de mision
             misiones = recibir_datos("recibir_misiones")
-            
+            if isinstance(misiones, dict) and "respuesta" in misiones:
+                print(misiones["respuesta"])
+                misiones = []
             while True:
                 try:
                     nombre = None
                     nombre_opcion = int(input("¿Aplicar filtro por nombre de mision?: 1-Si 2-No"))
-                    if nombre_opcion != 1 and nombre_opcion != 2:
+                    if nombre_opcion < 1 or nombre_opcion > 2:
                         raise ValueError("El valor es inválido")
                     break
                 except ValueError as ve:
                     print("Error: ",ve)
             if nombre_opcion == 1:
-                    nombre = str(input("¿Que nombre de mision desea filtrar?: "))
+                nombre = str(input("¿Que nombre de mision desea filtrar?: "))
             while True:
                 try:
-                    id = None
+                    sid = None
                     id_opcion = int(input("¿Aplicar filtro por id de satelite?: 1-Si 2-No"))
-                    if id_opcion != 1 and id_opcion != 2:
+                    if id_opcion < 1 or id_opcion > 2:
                         raise ValueError("El valor es inválido")
                     break
                 except ValueError as ve:
@@ -188,14 +194,13 @@ while True:
             if id_opcion == 1:
                 while True:
                     try:
-                        id = int(input("¿Que id de satelite desea filtrar?: "))
+                        sid = int(input("¿Que id de satelite desea filtrar?: "))
                         break
                     except Exception as e:
                         print("Error: ",e)
             misiones_filtradas = []
             for mision in misiones:
-                print(mision[1])
-                if (str(mision[1]) == nombre or nombre == None) and (mision[2] == id or id == None):
+                if (str(mision[1]) == nombre or nombre == None) and (mision[2] == sid or sid == None):
                     misiones_filtradas.append(mision)
             if len(misiones_filtradas) == 0:
                 print("No hay misiones con esos criterios")
@@ -208,15 +213,15 @@ while True:
 
 
         elif opcion == 5:
-            #filtrar por tipo de satelite, tipo de sensor y por estado
-
             satelites = recibir_datos("recibir_satelites")
-            
+            if isinstance(satelites, dict) and "respuesta" in satelites:
+                print(satelites["respuesta"])
+                satelites = []
             while True:
                 try:
                     tipo = None
                     tipo_opcion = int(input("¿Aplicar filtro por tipo de satelite?: 1-Si 2-No"))
-                    if tipo_opcion != 1 and tipo_opcion != 2:
+                    if tipo_opcion < 1 or tipo_opcion > 2:
                         raise ValueError("El valor es inválido")
                     break
                 except ValueError as ve:
@@ -240,14 +245,22 @@ while True:
                 try:
                     sensor = None
                     sensor_opcion = int(input("¿Aplicar filtro por tipo de sensor?: 1-Si 2-No"))
-                    if sensor_opcion != 1 and sensor_opcion != 2:
+                    if sensor_opcion < 1 or sensor_opcion > 2:
                         raise ValueError("El valor es inválido")
                     break
                 except ValueError as ve:
                     print("Error: ",ve)
 
             if sensor_opcion == 1:
-                sensor_elegir = int(input("¿Qué tipo de sensor desea filtrar? 1-Piranometro 2-Termometro 3-Barometro): "))
+                while True:
+                    try:
+                        sensor_elegir = int(input("¿Qué tipo de sensor desea filtrar? 1-Piranometro 2-Termometro 3-Barometro: "))
+                        if sensor_elegir < 1 or sensor_elegir > 3:
+                            raise ValueError("Ingrese un valor válido")
+                        break
+                    except ValueError as ve:
+                        print("Error: ",ve)
+
                 if sensor_elegir == 1:
                     sensor = "Piranometro"
                 elif sensor_elegir == 2:
@@ -258,7 +271,7 @@ while True:
                 try:
                     estado = None
                     estado_opcion = int(input("¿Aplicar filtro por estado?: 1-Si 2-No"))
-                    if estado_opcion != 1 and estado_opcion != 2:
+                    if estado_opcion < 1 or estado_opcion > 2:
                         raise ValueError("El valor es inválido")
                     break
                 except ValueError as ve:
@@ -280,9 +293,9 @@ while True:
                         print("Error: ",ve)
 
             satelites_filtrados = []
-            for satelite in satelites:
-                if (satelite[2] == tipo or tipo == None) and (sensor in satelite[6] or sensor == None) and (satelite[5] == estado or estado == None):
-                    satelites_filtrados.append(satelite)
+            for sat in satelites:
+                if (sat[2] == tipo or tipo == None) and (sensor in sat[6] or sensor == None) and (sat[5] == estado or estado == None):
+                    satelites_filtrados.append(sat)
             if len(satelites_filtrados) == 0:
                 print("No hay satelites con esos criterios")
             else:
@@ -291,6 +304,9 @@ while True:
                     print(sat)
         elif opcion == 6:
             lista_misiones = recibir_datos("recibir_misiones")
+            if isinstance(lista_misiones, dict) and "respuesta" in lista_misiones:
+                print(lista_misiones["respuesta"])
+                lista_misiones = []
             cantidad = 0
             for mis in lista_misiones:
                 cantidad +=1
@@ -299,17 +315,19 @@ while True:
                 while True:
                     try:
                         mision_elegida = int(input("Elija la mision en la que quiera registrar un dato: "))
-                        if mision_elegida > len(lista_misiones) or mision_elegida <1:
-                            raise ValueError("Ingrese un valor valido")
+                        if mision_elegida < 1 or mision_elegida > len(lista_misiones):
+                            raise ValueError("Ingrese un valor válido")
                         break
-                    except Exception as e:
-                        print("Error: ",e)
+                    except ValueError as ve:
+                        print("Error: ",ve)
                 while True:
-                    try:        
+                    try:
                         accion = int(input("¿Que dato se recolectará? 1-Imagen 2-Sensor 3-Medicion Científica"))
+                        if accion < 1 or accion > 3:
+                            raise ValueError("Ingrese un valor válido")
                         break
-                    except Exception as e:
-                        print("Error: ",e)
+                    except ValueError as ve:
+                        print("Error: ",ve)
                 if accion == 1:
                     descripcion = str(input("Describa el resultado de la medición científica "))
                     enviar = {
@@ -322,12 +340,21 @@ while True:
             
                 elif accion == 2:
                     lista_satelites = recibir_datos("recibir_satelites")
+                    if isinstance(lista_satelites, dict) and "respuesta" in lista_satelites:
+                        print(lista_satelites["respuesta"])
+                        lista_satelites = []
                     satelite_mision = None
 
                     for satelite in lista_satelites:
                         if satelite[0] == lista_misiones[mision_elegida-1][2]:
                             satelite_mision = satelite
-                    sensores = satelite[6]
+                    if satelite_mision is None:
+                        print("No se encontró el satélite asociado a la misión seleccionada.")
+                        continue
+                    sensores = satelite_mision[6]
+                    if len(sensores) == 0:
+                        print("La misión seleccionada no posee sensores asociados.")
+                        continue
                     cantidad = 0
                     for sensor in sensores:
                         cantidad +=1
@@ -335,24 +362,19 @@ while True:
                     while True:
                         try:
                             sensor_elegido = int(input("Seleccione el sensor que registrá un dato: "))
-                            if sensor_elegido > len(sensores) or sensor_elegido <1:
-                                raise ValueError("Ingrese un valor valido")
+                            if sensor_elegido < 1 or sensor_elegido > len(sensores):
+                                raise ValueError("Ingrese un valor válido")
                             break
-                        except Exception as e:
-                            print("Error: ",e)
+                        except ValueError as ve:
+                            print("Error: ",ve)
                     sensor_registrar = sensores[sensor_elegido-1]
-                    while True:
-                        try:
-                            valor = int(input("Ingrese el valor a registrar: "))
-                            break
-                        except Exception as e:
-                            print("Error: ",e)
+                    valor = int(input("Ingrese el valor a registrar: "))
                     enviar = {
                         "accion": "registrar_datos",
                         "id_mision": mision_elegida,
-                        "tipo": sensor_registrar["nombre"],
+                        "tipo": sensor_registrar,
                         "valor": valor,
-                        "descripcion": f"El tipo de unidad medida es: {sensor_registrar["tipo_unidad"]}"
+                        "descripcion": f"Dato registrado del sensor {sensor_registrar}"
                     }
                     
                            
@@ -375,6 +397,9 @@ while True:
             
         elif opcion == 7:
             lista_datos = recibir_datos("recibir_datos")
+            if isinstance(lista_datos, dict) and "respuesta" in lista_datos:
+                print(lista_datos["respuesta"])
+                lista_datos = []
             cantidad = 0
             for datos in lista_datos:
                 cantidad +=1
