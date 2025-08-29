@@ -45,10 +45,10 @@ while True:
             
             fecha_lanzamiento = input("Ingrese la fecha de lanzazmiento (DD-MM-YY): ")
 
-            orbita = input("Ingrese la altura a la que orbita (KM): ")
+            orbita = input("Ingrese la altura a la que orbita (min 160 KM): ")
             while True:
                 try:
-                    estado_opcion = int(input("Ingrese el estado de la mision: 1-Activo 2-Inactivo 3-En mantenimiento"))
+                    estado_opcion = int(input("Ingrese el estado: 1-Activo 2-Inactivo 3-En mantenimiento"))
                     if estado_opcion < 1 or estado_opcion > 3:
                         raise ValueError("Ingrese un valor válido")
                     break
@@ -113,7 +113,7 @@ while True:
             cantidad = 0
             for sat in lista_satelites:
                 cantidad +=1
-                print(f"{cantidad}-{sat}\n")
+                print(f"{cantidad}-Nombre:{sat[1]}| Tipo: {sat[2]}| Fecha de lanzamiento: {sat[3]}| Orbita: {sat[4]}| Estado: {sat[5]}\n")
             if len(lista_satelites) == 0:
                 print("Necesita tener un satelite creado")
                 continue
@@ -145,7 +145,7 @@ while True:
             cantidad = 0
             for mis in lista_misiones:
                 cantidad +=1
-                print(f"{cantidad}-{mis}\n")
+                print(f"{cantidad}-Nombre:{mis[1]}| ID del satelite: {mis[2]}| Objetivo: {mis[3]}| Zona de observación: {mis[4]}| Duracion: {mis[5]} días| Estado: {mis[6]}\n")
             while True:
                 try:
                     mision_elegida = int(input("Seleccione el satelite que quiera asignar: "))
@@ -206,8 +206,10 @@ while True:
                 print("No hay misiones con esos criterios")
             else:
                 print("Misiones encontradas:")
-                for mision in misiones_filtradas:
-                    print(mision)
+                cantidad = 0
+                for mis in misiones_filtradas:
+                    cantidad+=1
+                    print(f"{cantidad}-Nombre:{mis[1]}| ID del satelite: {mis[2]}| Objetivo: {mis[3]}| Zona de observación: {mis[4]}| Duracion: {mis[5]} días| Estado: {mis[6]}\n")
             
 
 
@@ -300,8 +302,10 @@ while True:
                 print("No hay satelites con esos criterios")
             else:
                 print("Satelites encontrados:")
+                cantidad = 0
                 for sat in satelites_filtrados:
-                    print(sat)
+                    cantidad += 1
+                    print(f"{cantidad}-Nombre:{sat[1]}| Tipo: {sat[2]}| Fecha de lanzamiento: {sat[3]}| Orbita: {sat[4]}| Estado: {sat[5]}\n")
         elif opcion == 6:
             lista_misiones = recibir_datos("recibir_misiones")
             if isinstance(lista_misiones, dict) and "respuesta" in lista_misiones:
@@ -310,7 +314,7 @@ while True:
             cantidad = 0
             for mis in lista_misiones:
                 cantidad +=1
-                print(f"{cantidad}-{mis}\n")
+                print(f"{cantidad}-Nombre:{mis[1]}| ID del satelite: {mis[2]}| Objetivo: {mis[3]}| Zona de observación: {mis[4]}| Duracion: {mis[5]} días| Estado: {mis[6]}\n")
             if len(lista_misiones) != 0:
                 while True:
                     try:
@@ -387,7 +391,7 @@ while True:
                         "valor": None,
                         "descripcion": descripcion
                     }
-                print(enviar)
+                
                 servidor.sendall(json.dumps(enviar).encode())
                 respuesta = servidor.recv(3000).decode()
                 respuesta = json.loads(respuesta)
@@ -403,7 +407,10 @@ while True:
             cantidad = 0
             for datos in lista_datos:
                 cantidad +=1
-                print(f"{cantidad}-{datos}\n")
+                if datos[3] == None:
+                    print(f"{cantidad}-ID de misión: {datos[1]}| Tipo de dato recolectado: {datos[2]}| Descripción: {datos[4]}\n")
+                else:
+                    print(f"{cantidad}-ID de misión: {datos[1]}| Tipo de dato recolectado: {datos[2]}| Valor registrado: {datos[3]}| Descripción: {datos[4]}\n")
         elif opcion == 8:
             mensaje = {
                 "accion":"salir"

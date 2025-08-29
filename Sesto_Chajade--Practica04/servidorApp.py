@@ -56,7 +56,7 @@ def validar_mision(data):
             duracion = int(data.get("duracion"))
         except Exception:
             raise ValueError("Duración inválida")
-        if duracion < 0:
+        if duracion < 1:
             raise ValueError("Duración fuera de rango")
         if not data.get("estado") or not isinstance(data.get("estado"), str):
             raise ValueError("Estado inválido")
